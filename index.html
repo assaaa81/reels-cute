@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Lokasi Tebakan</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: #f4f4f4;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Tebak Lokasimu!</h1>
+  <p>Tekan tombol di bawah dan lihat apakah AI bisa menebak kamu lagi di mana 🧠📍</p>
+  <button onclick="getLocation()">Mulai</button>
+  <div id="result"></div>
+
+  <script>
+    function getLocation() {
+      const resultDiv = document.getElementById("result");
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            resultDiv.innerHTML = `AI menebak kamu sedang di koordinat: <br><strong>${lat.toFixed(5)}, ${lon.toFixed(5)}</strong>`;
+          },
+          (error) => {
+            resultDiv.innerHTML = "Gagal mendapatkan lokasi 😢 (coba izinkan akses lokasi di browsermu)";
+          }
+        );
+      } else {
+        resultDiv.innerHTML = "Browser kamu tidak mendukung fitur lokasi.";
+      }
+    }
+  </script>
+</body>
+</html>
