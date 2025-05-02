@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +11,7 @@
       padding: 50px;
       background-color: #f4f4f4;
     }
-    #result {
+    #result, #game {
       margin-top: 20px;
       font-size: 1.2rem;
     }
@@ -28,17 +27,41 @@
     button:hover {
       background-color: #45a049;
     }
+    .quiz-option {
+      margin: 8px 0;
+    }
   </style>
 </head>
 <body>
-  <h1>Website Bosen-bosenan 😴</h1>
-  <p>Tekan tombol di bawah dan lihat apakah AI bisa menebak kamu lagi di mana 🧠📍</p>
+  <h1>Ada banyak pertanyaan dan quiz loh, yuk cobain🤩</h1>
+  <p>Tekan tombol di bawah untuk memulai</p>
   <button onclick="getLocation()">Mulai</button>
   <div id="result"></div>
+  <div id="game"></div>
 
   <script>
+    const tebakTebakan = [
+      "Apa bedanya kamu sama jam? Jam terus berdetak, kalau kamu terus di hati. 🥰",
+      "Kenapa hati kamu kayak kos-kosan? Karena aku pengen ngekos selamanya. 😆",
+      "Kalau kamu jadi angka, kamu bakal jadi 1... soalnya kamu nomor satu di hatiku. 💘"
+    ];
+
+    const quizCinta = {
+      question: "Kalau kamu lihat orang yang kamu suka, kamu bakal?",
+      options: [
+        "A. Senyum doang 😅",
+        "B. Chat terus 💬",
+        "C. Diam-diam stalking 👀",
+        "D. Langsung nembak 😎"
+      ]
+    };
+
+    const gambarEmojis = ["💘", "💌", "❤️", "😍", "🌹", "💕"];
+
     function getLocation() {
       const resultDiv = document.getElementById("result");
+      const gameDiv = document.getElementById("game");
+      gameDiv.innerHTML = ""; // reset game
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -46,6 +69,24 @@
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             resultDiv.innerHTML = `AI menebak kamu sedang di koordinat: <br><strong>${lat.toFixed(5)}, ${lon.toFixed(5)}</strong>`;
+
+            // Mulai game setelah 1 detik
+            setTimeout(() => {
+              // Tebak-tebakan cinta
+              const randomTebak = tebakTebakan[Math.floor(Math.random() * tebakTebakan.length)];
+              gameDiv.innerHTML += `<p><strong>Tebak-Tebakan Cinta:</strong><br>${randomTebak}</p>`;
+
+              // Quiz cinta
+              gameDiv.innerHTML += `<br><p><strong>Quiz Cinta:</strong><br>${quizCinta.question}</p>`;
+              quizCinta.options.forEach(opt => {
+                gameDiv.innerHTML += `<div class="quiz-option"><input type="radio" name="quiz" /> ${opt}</div>`;
+              });
+
+              // Tampilkan emoji cinta terakhir
+              const emoji = gambarEmojis[Math.floor(Math.random() * gambarEmojis.length)];
+              gameDiv.innerHTML += `<br><p><strong>Gambaran Cinta Kamu Hari Ini:</strong><br><span style="font-size: 2rem">${emoji}</span></p>`;
+
+            }, 1000);
           },
           (error) => {
             resultDiv.innerHTML = "Gagal mendapatkan lokasi 😢 (coba izinkan akses lokasi di browsermu)";
