@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Lokasi Tebakan</title>
+  <title>Game Cinta Interaktif</title>
   <style>
     body {
       font-family: sans-serif;
@@ -11,11 +11,9 @@
       padding: 50px;
       background-color: #f4f4f4;
     }
-    #result, #game {
-      margin-top: 20px;
-      font-size: 1.2rem;
-    }
+    .hidden { display: none; }
     button {
+      margin-top: 20px;
       padding: 10px 20px;
       font-size: 1rem;
       border: none;
@@ -27,75 +25,112 @@
     button:hover {
       background-color: #45a049;
     }
-    .quiz-option {
-      margin: 8px 0;
-    }
   </style>
 </head>
 <body>
-  <h1>Ada banyak pertanyaan dan quiz loh, yuk cobain🤩</h1>
-  <p>Tekan tombol di bawah untuk memulai</p>
-  <button onclick="getLocation()">Mulai</button>
-  <div id="result"></div>
-  <div id="game"></div>
+
+  <!-- STEP 1: Lokasi -->
+  <div id="step1">
+    <h1>Website Bosen-bosenan 😴</h1>
+    <p>Tekan tombol di bawah untuk memulai</p>
+    <button onclick="startLocation()">Mulai</button>
+    <div id="locationResult"></div>
+  </div>
+
+  <!-- STEP 2: Tebak-Tebakan -->
+  <div id="step2" class="hidden">
+    <h2>Tebak-Tebakan Cinta 💘</h2>
+    <p id="tebakan"></p>
+    <button id="jawabanBtn" onclick="showJawaban()">Klik untuk melihat jawaban</button>
+    <p id="jawaban" class="hidden"></p>
+    <button id="nextTebakanBtn" class="hidden" onclick="nextTebakan()">Lanjut ➡️</button>
+  </div>
+
+  <!-- STEP 3: Quiz -->
+  <div id="step3" class="hidden">
+    <h2>Quiz Cinta 🥰</h2>
+    <p>Kalau kamu lihat orang yang kamu suka, kamu bakal?</p>
+    <div><input type="radio" name="quiz" /> A. Senyum doang 😅</div>
+    <div><input type="radio" name="quiz" /> B. Chat terus 💬</div>
+    <div><input type="radio" name="quiz" /> C. Diam-diam stalking 👀</div>
+    <div><input type="radio" name="quiz" /> D. Langsung nembak 😎</div>
+    <button onclick="showGambar()">Lihat Hasil Cinta Kamu</button>
+  </div>
+
+  <!-- STEP 4: Gambar Emoji -->
+  <div id="step4" class="hidden">
+    <h2>Gambaran Cinta Kamu Hari Ini:</h2>
+    <div id="emoji" style="font-size: 3rem;"></div>
+  </div>
 
   <script>
-    const tebakTebakan = [
-      "Apa bedanya kamu sama jam? Jam terus berdetak, kalau kamu terus di hati. 🥰",
-      "Kenapa hati kamu kayak kos-kosan? Karena aku pengen ngekos selamanya. 😆",
-      "Kalau kamu jadi angka, kamu bakal jadi 1... soalnya kamu nomor satu di hatiku. 💘"
-    ];
-
-    const quizCinta = {
-      question: "Kalau kamu lihat orang yang kamu suka, kamu bakal?",
-      options: [
-        "A. Senyum doang 😅",
-        "B. Chat terus 💬",
-        "C. Diam-diam stalking 👀",
-        "D. Langsung nembak 😎"
-      ]
-    };
-
-    const gambarEmojis = ["💘", "💌", "❤️", "😍", "🌹", "💕"];
-
-    function getLocation() {
-      const resultDiv = document.getElementById("result");
-      const gameDiv = document.getElementById("game");
-      gameDiv.innerHTML = ""; // reset game
-
+    // Step 1: Lokasi
+    function startLocation() {
+      const res = document.getElementById("locationResult");
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            resultDiv.innerHTML = `AI menebak kamu sedang di koordinat: <br><strong>${lat.toFixed(5)}, ${lon.toFixed(5)}</strong>`;
-
-            // Mulai game setelah 1 detik
+            const lat = position.coords.latitude.toFixed(5);
+            const lon = position.coords.longitude.toFixed(5);
+            res.innerHTML = `AI menebak kamu sedang di koordinat:<br><strong>${lat}, ${lon}</strong>`;
             setTimeout(() => {
-              // Tebak-tebakan cinta
-              const randomTebak = tebakTebakan[Math.floor(Math.random() * tebakTebakan.length)];
-              gameDiv.innerHTML += `<p><strong>Tebak-Tebakan Cinta:</strong><br>${randomTebak}</p>`;
-
-              // Quiz cinta
-              gameDiv.innerHTML += `<br><p><strong>Quiz Cinta:</strong><br>${quizCinta.question}</p>`;
-              quizCinta.options.forEach(opt => {
-                gameDiv.innerHTML += `<div class="quiz-option"><input type="radio" name="quiz" /> ${opt}</div>`;
-              });
-
-              // Tampilkan emoji cinta terakhir
-              const emoji = gambarEmojis[Math.floor(Math.random() * gambarEmojis.length)];
-              gameDiv.innerHTML += `<br><p><strong>Gambaran Cinta Kamu Hari Ini:</strong><br><span style="font-size: 2rem">${emoji}</span></p>`;
-
-            }, 1000);
+              document.getElementById("step1").classList.add("hidden");
+              document.getElementById("step2").classList.remove("hidden");
+              loadTebakan();
+            }, 1500);
           },
-          (error) => {
-            resultDiv.innerHTML = "Gagal mendapatkan lokasi 😢 (coba izinkan akses lokasi di browsermu)";
+          () => {
+            res.innerHTML = "Gagal mendapatkan lokasi 😢";
           }
         );
       } else {
-        resultDiv.innerHTML = "Browser kamu tidak mendukung fitur lokasi.";
+        res.innerHTML = "Browser kamu tidak mendukung fitur lokasi.";
       }
     }
+
+    // Step 2: Tebak-tebakan
+    const tebakanList = [
+      ["Apa bedanya kamu sama jam?", "Jam terus berdetak, kalau kamu terus di hatiku ❤️"],
+      ["Kenapa hati kamu kayak kos-kosan?", "Karena aku pengen ngekos selamanya 😆"],
+      ["Kalau kamu jadi angka, kamu bakal jadi?", "Angka satu, karena kamu nomor satu di hati 🥇"],
+      ["Kamu tahu nggak kenapa aku nggak bisa tidur?", "Karena kepikiran kamu terus 😴❤️"],
+      ["Kenapa aku suka hujan?", "Soalnya pas hujan aku bisa pura-pura nyari kamu ☔💕"]
+    ];
+    let currentTebakan = 0;
+
+    function loadTebakan() {
+      document.getElementById("tebakan").innerText = tebakanList[currentTebakan][0];
+      document.getElementById("jawaban").classList.add("hidden");
+      document.getElementById("jawabanBtn").classList.remove("hidden");
+      document.getElementById("nextTebakanBtn").classList.add("hidden");
+    }
+
+    function showJawaban() {
+      document.getElementById("jawaban").innerText = tebakanList[currentTebakan][1];
+      document.getElementById("jawaban").classList.remove("hidden");
+      document.getElementById("jawabanBtn").classList.add("hidden");
+      document.getElementById("nextTebakanBtn").classList.remove("hidden");
+    }
+
+    function nextTebakan() {
+      currentTebakan++;
+      if (currentTebakan < tebakanList.length) {
+        loadTebakan();
+      } else {
+        document.getElementById("step2").classList.add("hidden");
+        document.getElementById("step3").classList.remove("hidden");
+      }
+    }
+
+    // Step 4: Emoji Cinta
+    function showGambar() {
+      document.getElementById("step3").classList.add("hidden");
+      document.getElementById("step4").classList.remove("hidden");
+      const emojis = ["💘", "💌", "❤️", "😍", "🌹", "💕"];
+      const chosen = emojis[Math.floor(Math.random() * emojis.length)];
+      document.getElementById("emoji").innerText = chosen;
+    }
   </script>
+
 </body>
 </html>
